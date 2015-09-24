@@ -49,6 +49,33 @@
         fn.call(scope, this[i], i, this);
       }
     }
+  };  
+
+  var arrayFilter = function(fun) {
+    'use strict';
+
+    if (this === void 0 || this === null) {
+      throw new TypeError();
+    }
+
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (typeof fun !== 'function') {
+      throw new TypeError();
+    }
+
+    var res = [];
+    var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+    for (var i = 0; i < len; i++) {
+      if (i in t) {
+        var val = t[i];
+        if (fun.call(thisArg, val, i, t)) {
+          res.push(val);
+        }
+      }
+    }
+
+    return res;
   };
 
   // SVG Cache
@@ -259,7 +286,7 @@
       }
 
       // Copy all the data elements to the svg
-      var imgData = [].filter.call(el.attributes, function (at) {
+      var imgData = arrayFilter.call(el.attributes, function (at) {
         return (/^data-\w[\w\-]*$/).test(at.name);
       });
       forEach.call(imgData, function (dataAttr) {
